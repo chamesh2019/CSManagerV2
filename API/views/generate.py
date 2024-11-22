@@ -1,4 +1,5 @@
 import json
+import os
 from typing import List, Dict, Union
 import google.generativeai as genai
 from rest_framework.request import Request
@@ -6,8 +7,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from API.models import Document, History, Question, Module
+from dotenv import load_dotenv
 
-API_KEY = "API_KEY"
+load_dotenv()
+
+API_KEY = os.getenv('API_KEY')
 
 prompt = """
 Create 2 detailed multiple-choice questions (MCQs) from the above content. Ensure that every small detail is addressed, including minor facts, nuanced concepts, and specific terminology.
