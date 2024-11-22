@@ -1,5 +1,6 @@
 .venv/
 documents/
+.idea/
 
 .env
 db.sqlite3
