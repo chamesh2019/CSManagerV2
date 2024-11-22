@@ -7,6 +7,8 @@ from rest_framework.views import APIView
 
 from API.models import Document, History, Question, Module
 
+API_KEY = "API_KEY"
+
 prompt = """
 Create 2 detailed multiple-choice questions (MCQs) from the above content. Ensure that every small detail is addressed, including minor facts, nuanced concepts, and specific terminology.
 
@@ -44,7 +46,7 @@ def generate_questions(content: str, document: Document) -> List[Dict[str, Union
     List[Dict[str, Union[str, List[str], int]]]: A list of dictionaries, each containing a question, options, answer, and explanation.
     """
 
-    genai.configure(api_key='AIzaSyDMmOWjVe0yt6SCfk-cAWoBDUHmov1Ov88')
+    genai.configure(api_key=API_KEY)
     model = genai.GenerativeModel('gemini-1.5-flash-8b')
 
     history = ""
