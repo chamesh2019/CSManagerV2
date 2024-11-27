@@ -14,7 +14,7 @@ load_dotenv()
 API_KEY = os.getenv('API_KEY')
 
 prompt = """
-Create 2 detailed multiple-choice questions (MCQs) from the above content. Ensure that every small detail is addressed, including minor facts, nuanced concepts, and specific terminology.
+Create 10 detailed multiple-choice questions (MCQs) from the above content. Ensure that every small detail is addressed, including minor facts, nuanced concepts, and specific terminology.
 
 Instructions:
     - Cover all aspects of the content, leaving no detail unexplored.
@@ -22,7 +22,7 @@ Instructions:
         Write the question clearly.
         Provide four answer options: one correct answer and three plausible distractors.
         Include an explanation for the correct answer, clarifying why it's correct and why the distractors are incorrect.
-    - Question difficulty should be high, covering the following levels:
+    - Question difficulty should be difficulity_here, covering the following levels:
         Basic fact recall.
         Conceptual understanding.
         Application and critical thinking based on the content.
@@ -39,7 +39,7 @@ Return the result as a JSON object structured as follows:
 ]
 """
 
-def generate_questions(content: str, document: Document) -> List[Dict[str, Union[str, List[str], int]]]:
+def generate_questions(content: str, document: Document, difficulty: str) -> Dict[str, Union[str, List[str], int]]:
     """
     Generate a set of multiple-choice questions from the given content.
 
@@ -66,7 +66,7 @@ def generate_questions(content: str, document: Document) -> List[Dict[str, Union
     Previously generated questions:
     {history}
     --------------------------------------------
-    {prompt}
+    {prompt.replace('difficulity_here', difficulty)}
     --------------------------------------------
     """
 
@@ -107,6 +107,7 @@ class GenerateQuestionsView(APIView):
     def get(self, request: Request) -> Response:
         module_id = int(request.data.get('module', -1))
         document_id = int(request.data.get('module', -1))
+        difficulty = request.data.get('difficulty', 'Easy')
 
         if module_id == -1:
             document = Document.objects.all().order_by('?').first()
@@ -118,7 +119,7 @@ class GenerateQuestionsView(APIView):
 
         content = document.file.read()
 
-        questions = generate_questions(content, document)
+        questions = generate_questions(content, document, difficulty)
 
         for question in questions:
             question_instance = Question(
@@ -127,7 +128,8 @@ class GenerateQuestionsView(APIView):
                 correct_option=question['answer'],
                 module=document.module,
                 document=document,
-                explanation=question['explanation']
+                explanation=question['explanation'],
+                difficulty=difficulty
             )
             question_instance.save()
 

@@ -4,6 +4,7 @@ class Question(models.Model):
     question_text = models.TextField()
     options = models.TextField()
     correct_option = models.IntegerField()
+    difficulty = models.CharField(max_length=25, default='Medium')
     module = models.ForeignKey('Module', on_delete=models.CASCADE)
     document = models.ForeignKey('Document', on_delete=models.CASCADE)
     explanation = models.TextField()

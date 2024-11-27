@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from rest_framework.request import Request
 
-from API.models import Document
+from API.models import Document, Module
 from API.serializers import DocumentSerializer
 
 from rest_framework.views import APIView, Response
@@ -27,7 +27,8 @@ class DocumentView(APIView):
         if 'add' in request.GET.keys():
             return HttpResponse(form)
 
-        documents = Document.objects.all()
+        module = request.query_params.get('module', -1)
+        documents = Document.objects.filter(module=int(module))
         serialized_documents = DocumentSerializer(documents, many=True)
 
         return Response({"documents": serialized_documents.data})
